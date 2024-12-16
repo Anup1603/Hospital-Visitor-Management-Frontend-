@@ -1,5 +1,5 @@
 import React from "react";
-import VisitorForm from "./components/visitorForm";
+import VisitorForm from "./components/VisitorForm";
 
 function App() {
   return (
