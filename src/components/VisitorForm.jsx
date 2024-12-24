@@ -1,56 +1,59 @@
 import React, { useState } from "react";
 import "./VisitorFormStyle.css";
 
-const VisitorForm = () => {
-  const [formData, setFormData] = useState({
+const VisitorForm = ({ addVisitor }) => {
+  const [formState, setFormState] = useState({
     name: "",
     contact: "",
     email: "",
     photo: null,
     purpose: "",
     otherPurpose: "",
-    visitPerson: "",
+    visitPersonOrDepartment: "",
     expectedDuration: "",
     governmentId: "",
     idLast4Digits: "",
-    agreement: false,
+    isApproved: false,
   });
 
   const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]:
-        type === "checkbox" ? checked : type === "file" ? files[0] : value,
-    }));
+    const { name, value, type, checked } = e.target;
+    setFormState({
+      ...formState,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
-  const handleSubmit = (e) => {
+  const handleFileChange = (e) => {
+    setFormState({ ...formState, photo: e.target.files[0] });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Create a formatted object for submission
-    const submittedData = {
-      ...formData,
-      photo: formData.photo ? formData.photo.name : null,
-    };
+    const visitor = { ...formState };
 
-    console.log("Form Submitted:", submittedData);
-    alert("Form submitted successfully!");
+    // Optional: If 'Other Purpose' is selected
+    if (visitor.purpose !== "Other") {
+      visitor.otherPurpose = "";
+    }
+
+    // Handle visitor submission
+    addVisitor(visitor);
 
     // Reset form
-    setFormData({
+    setFormState({
       name: "",
       contact: "",
       email: "",
       photo: null,
       purpose: "",
       otherPurpose: "",
-      visitPerson: "",
+      visitPersonOrDepartment: "",
       expectedDuration: "",
       governmentId: "",
       idLast4Digits: "",
-      agreement: false,
+      isApproved: false,
     });
   };
 
@@ -59,45 +62,43 @@ const VisitorForm = () => {
       <form className="visitor-form" onSubmit={handleSubmit}>
         <h2>Hospital Visitor Registration</h2>
 
-        {/* Full Name */}
         <div className="form-group">
           <label htmlFor="name">Full Name:</label>
           <input
             type="text"
             id="name"
             name="name"
-            value={formData.name}
+            value={formState.name}
             onChange={handleChange}
             required
           />
         </div>
 
-        {/* Contact Number */}
         <div className="form-group">
           <label htmlFor="contact">Contact Number:</label>
           <input
             type="text"
             id="contact"
             name="contact"
-            value={formData.contact}
+            value={formState.contact}
             onChange={handleChange}
+            pattern="^\d{10}$"
+            title="Contact number must be 10 digits."
             required
           />
         </div>
 
-        {/* Email Address (Optional) */}
         <div className="form-group">
           <label htmlFor="email">Email Address (Optional):</label>
           <input
             type="email"
             id="email"
             name="email"
-            value={formData.email}
+            value={formState.email}
             onChange={handleChange}
           />
         </div>
 
-        {/* Photo Capture (Optional) */}
         <div className="form-group">
           <label htmlFor="photo">Upload Photo (Optional):</label>
           <input
@@ -105,17 +106,16 @@ const VisitorForm = () => {
             id="photo"
             name="photo"
             accept="image/*"
-            onChange={handleChange}
+            onChange={handleFileChange}
           />
         </div>
 
-        {/* Purpose of Visit */}
         <div className="form-group">
           <label htmlFor="purpose">Purpose of Visit:</label>
           <select
             id="purpose"
             name="purpose"
-            value={formData.purpose}
+            value={formState.purpose}
             onChange={handleChange}
             required
           >
@@ -130,41 +130,40 @@ const VisitorForm = () => {
           </select>
         </div>
 
-        {/* Description for "Other" Purpose */}
-        {formData.purpose === "Other" && (
+        {formState.purpose === "Other" && (
           <div className="form-group">
             <label htmlFor="otherPurpose">Please Specify:</label>
             <input
               type="text"
               id="otherPurpose"
               name="otherPurpose"
-              value={formData.otherPurpose}
+              value={formState.otherPurpose}
               onChange={handleChange}
               required
             />
           </div>
         )}
 
-        {/* Person/Department to Visit */}
         <div className="form-group">
-          <label htmlFor="visitPerson">Person/Department to Visit:</label>
+          <label htmlFor="visitPersonOrDepartment">
+            Person/Department to Visit:
+          </label>
           <input
             type="text"
-            id="visitPerson"
-            name="visitPerson"
-            value={formData.visitPerson}
+            id="visitPersonOrDepartment"
+            name="visitPersonOrDepartment"
+            value={formState.visitPersonOrDepartment}
             onChange={handleChange}
             required
           />
         </div>
 
-        {/* Expected Duration */}
         <div className="form-group">
           <label htmlFor="expectedDuration">Expected Duration:</label>
           <select
             id="expectedDuration"
             name="expectedDuration"
-            value={formData.expectedDuration}
+            value={formState.expectedDuration}
             onChange={handleChange}
             required
           >
@@ -176,13 +175,12 @@ const VisitorForm = () => {
           </select>
         </div>
 
-        {/* Government ID Selection */}
         <div className="form-group">
           <label htmlFor="governmentId">Government ID:</label>
           <select
             id="governmentId"
             name="governmentId"
-            value={formData.governmentId}
+            value={formState.governmentId}
             onChange={handleChange}
             required
           >
@@ -196,27 +194,27 @@ const VisitorForm = () => {
           </select>
         </div>
 
-        {/* Last 4 Digits of ID */}
         <div className="form-group">
           <label htmlFor="idLast4Digits">Last 4 Digits of ID:</label>
           <input
             type="text"
             id="idLast4Digits"
             name="idLast4Digits"
-            value={formData.idLast4Digits}
+            value={formState.idLast4Digits}
             onChange={handleChange}
+            pattern="^\d{4}$"
+            title="Must be exactly 4 digits."
             required
           />
         </div>
 
-        {/* Terms and Conditions */}
         <div className="form-group">
           <label>
             <input
               type="checkbox"
-              id="agreement"
-              name="agreement"
-              checked={formData.agreement}
+              id="isApproved"
+              name="isApproved"
+              checked={formState.isApproved}
               onChange={handleChange}
               required
             />
@@ -224,7 +222,6 @@ const VisitorForm = () => {
           </label>
         </div>
 
-        {/* Submit Button */}
         <button type="submit">Submit</button>
       </form>
     </div>
