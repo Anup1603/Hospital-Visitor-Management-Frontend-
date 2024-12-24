@@ -6,7 +6,7 @@ function App() {
 
   async function getData() {
     try {
-      const res = await fetch("http://localhost:8000/api/visitors");
+      const res = await fetch("https://hvm-backend.onrender.com/api/visitors");
       const data = await res.json();
 
       if (!res.ok) throw new Error("Error fetching data from backend");
@@ -24,7 +24,7 @@ function App() {
 
   const addVisitor = async (visitor) => {
     try {
-      const res = await fetch("http://localhost:8000/api/visitors", {
+      const res = await fetch("https://hvm-backend.onrender.com/api/visitors", {
         method: "POST",
         body: JSON.stringify(visitor),
         headers: {
