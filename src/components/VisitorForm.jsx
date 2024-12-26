@@ -55,6 +55,8 @@ const VisitorForm = ({ addVisitor }) => {
       idLast4Digits: "",
       isApproved: false,
     });
+
+    alert("Visitor Form fill successful!");
   };
 
   return (

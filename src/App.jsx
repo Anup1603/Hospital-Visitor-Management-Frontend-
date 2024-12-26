@@ -19,7 +19,6 @@ function App() {
 
   useEffect(() => {
     getData();
-    console.log("USE EFFECT used");
   }, []);
 
   const addVisitor = async (visitor) => {
