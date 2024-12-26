@@ -13,7 +13,7 @@ const VisitorForm = ({ addVisitor }) => {
     expectedDuration: "",
     governmentId: "",
     idLast4Digits: "",
-    isApproved: false,
+    checked: false,
   });
 
   const handleChange = (e) => {
@@ -41,6 +41,8 @@ const VisitorForm = ({ addVisitor }) => {
     // Handle visitor submission
     addVisitor(visitor);
 
+    alert("Visitor Form fill successful!");
+
     // Reset form
     setFormState({
       name: "",
@@ -53,10 +55,8 @@ const VisitorForm = ({ addVisitor }) => {
       expectedDuration: "",
       governmentId: "",
       idLast4Digits: "",
-      isApproved: false,
+      checked: "",
     });
-
-    alert("Visitor Form fill successful!");
   };
 
   return (
@@ -214,9 +214,8 @@ const VisitorForm = ({ addVisitor }) => {
           <label>
             <input
               type="checkbox"
-              id="isApproved"
-              name="isApproved"
-              checked={formState.isApproved}
+              id="checked"
+              name="checked"
               onChange={handleChange}
               required
             />
