@@ -79,7 +79,7 @@ function App() {
 
   return (
     <div>
-      <h1>Hospital ID: {hospitalData.hospitalName}</h1>
+      <h1>Hospital Name : {hospitalData.hospitalName}</h1>
       {loading ? (
         <p>Loading...</p>
       ) : (
