@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./VisitorFormStyle.css";
 
-const VisitorForm = ({ addVisitor }) => {
+const VisitorForm = ({ addVisitor, hospitalId, loading }) => {
   const [formState, setFormState] = useState({
     name: "",
     contact: "",
@@ -31,7 +31,7 @@ const VisitorForm = ({ addVisitor }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const visitor = { ...formState };
+    const visitor = { ...formState, hospital: hospitalId };
 
     // Optional: If 'Other Purpose' is selected
     if (visitor.purpose !== "Other") {
@@ -40,8 +40,9 @@ const VisitorForm = ({ addVisitor }) => {
 
     // Handle visitor submission
     addVisitor(visitor);
+    console.log(visitor);
 
-    alert("Visitor Form fill successful!");
+    alert("Visitor Form filled successfully!");
 
     // Reset form
     setFormState({
@@ -55,7 +56,7 @@ const VisitorForm = ({ addVisitor }) => {
       expectedDuration: "",
       governmentId: "",
       idLast4Digits: "",
-      checked: "",
+      checked: false,
     });
   };
 
@@ -223,7 +224,9 @@ const VisitorForm = ({ addVisitor }) => {
           </label>
         </div>
 
-        <button type="submit">Submit</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Loading..." : "Submit"}
+        </button>
       </form>
     </div>
   );
