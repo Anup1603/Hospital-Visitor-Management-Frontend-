@@ -40,7 +40,6 @@ const VisitorForm = ({ addVisitor, hospitalId, loading }) => {
 
     // Handle visitor submission
     addVisitor(visitor);
-    console.log(visitor);
 
     alert("Visitor Form filled successfully!");
 

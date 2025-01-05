@@ -16,16 +16,12 @@ function App() {
         return;
       }
 
-      console.log("Hospital ID from URL:", hospitalId);
-
       // Fetch hospital data
       const hospitalRes = await axios.get(`/api/hospital/${hospitalId}`);
-      console.log("Hospital Data:", hospitalRes.data);
       setHospitalData(hospitalRes.data);
 
       // Fetch visitor data
       const visitorRes = await axios.get(`/api/visitors/${hospitalId}`);
-      console.log("Visitor Data:", visitorRes.data);
 
       setFormData(visitorRes.data);
     } catch (error) {
@@ -63,7 +59,6 @@ function App() {
         }
       );
 
-      console.log("New Visitor Added:", res.data);
       setFormData((prev) => [...prev, res.data]);
     } catch (error) {
       console.error(
