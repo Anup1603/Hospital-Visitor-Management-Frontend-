@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import axios from "../src/axiosInstance";
 import VisitorForm from "./components/VisitorForm";
 
 function App() {
@@ -19,16 +19,12 @@ function App() {
       console.log("Hospital ID from URL:", hospitalId);
 
       // Fetch hospital data
-      const hospitalRes = await axios.get(
-        `https://hvm-backend.onrender.com/api/hospital/${hospitalId}`
-      );
+      const hospitalRes = await axios.get(`/api/hospital/${hospitalId}`);
       console.log("Hospital Data:", hospitalRes.data);
       setHospitalData(hospitalRes.data);
 
       // Fetch visitor data
-      const visitorRes = await axios.get(
-        `https://hvm-backend.onrender.com/api/visitors/${hospitalId}`
-      );
+      const visitorRes = await axios.get(`/api/visitors/${hospitalId}`);
       console.log("Visitor Data:", visitorRes.data);
 
       setFormData(visitorRes.data);
@@ -55,7 +51,7 @@ function App() {
 
       // Post visitor data to the backend
       const res = await axios.post(
-        `https://hvm-backend.onrender.com/api/visitors/${hospitalId}`,
+        `/api/visitors/${hospitalId}`,
         {
           ...visitor,
           hospital: hospitalId,
