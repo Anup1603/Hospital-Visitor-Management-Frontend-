@@ -83,8 +83,8 @@ const VisitorForm = ({ addVisitor, hospitalId, loading }) => {
     formState.expectedDuration &&
     formState.governmentId &&
     formState.idLast4Digits &&
-    formState.checked &&
-    formState.photo; // Ensure photo is also included
+    formState.checked;
+  // formState.photo;
 
   return (
     <Box sx={{ p: 4, maxWidth: 500, margin: "auto" }}>
