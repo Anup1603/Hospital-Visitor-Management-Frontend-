@@ -297,15 +297,18 @@ const VisitorForm = ({ addVisitor, hospitalId, loading }) => {
             p: 4,
             boxShadow: 24,
             textAlign: "center",
+            width: { xs: "80%", sm: "50%" },
           }}
         >
           <CheckCircleOutlineIcon
-            sx={{ fontSize: 80, color: "green", mb: 2 }}
+            sx={{ fontSize: { xs: 60, sm: 80 }, color: "green", mb: 2 }}
           />
-          <Typography variant="h6" sx={{ mb: 1 }}>
+          <Typography variant="h6" sx={{ mb: 1, fontSize: { xs: "1rem" } }}>
             Your form is submitted successfully!
           </Typography>
-          <Typography variant="body1">Just wait for approval.</Typography>
+          <Typography variant="body1" sx={{ fontSize: { xs: "0.9rem" } }}>
+            Just wait for approval.
+          </Typography>
         </Box>
       </Modal>
     </Box>
