@@ -87,7 +87,17 @@ const VisitorForm = ({ addVisitor, hospitalId, loading }) => {
   // formState.photo;
 
   return (
-    <Box sx={{ p: 4, maxWidth: 500, margin: "auto" }}>
+    <Box
+      sx={{
+        p: 4,
+        maxWidth: 500,
+        margin: "auto",
+        "@media (max-width: 600px)": {
+          p: 2,
+          maxWidth: "90%",
+        },
+      }}
+    >
       <form onSubmit={handleSubmit}>
         <Typography variant="h5" sx={{ mb: 2, textAlign: "center" }}>
           Hospital Visitor Registration
