@@ -1,12 +1,24 @@
 import React, { useState } from "react";
-import "./VisitorFormStyle.css";
+import {
+  TextField,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Box,
+  Modal,
+  Typography,
+} from "@mui/material";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 
 const VisitorForm = ({ addVisitor, hospitalId, loading }) => {
   const [formState, setFormState] = useState({
     name: "",
     contact: "",
     email: "",
-    photo: null,
     purpose: "",
     otherPurpose: "",
     visitPersonOrDepartment: "",
@@ -14,7 +26,10 @@ const VisitorForm = ({ addVisitor, hospitalId, loading }) => {
     governmentId: "",
     idLast4Digits: "",
     checked: false,
+    // photo: null,
   });
+
+  const [isModalOpen, setModalOpen] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -24,31 +39,30 @@ const VisitorForm = ({ addVisitor, hospitalId, loading }) => {
     });
   };
 
-  const handleFileChange = (e) => {
-    setFormState({ ...formState, photo: e.target.files[0] });
-  };
+  // const handlePhotoChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     setFormState({ ...formState, photo: URL.createObjectURL(file) });
+  //   }
+  // };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     const visitor = { ...formState, hospital: hospitalId };
 
-    // Optional: If 'Other Purpose' is selected
     if (visitor.purpose !== "Other") {
       visitor.otherPurpose = "";
     }
 
-    // Handle visitor submission
     addVisitor(visitor);
 
-    alert("Visitor Form filled successfully!");
+    setModalOpen(true);
 
-    // Reset form
     setFormState({
       name: "",
       contact: "",
       email: "",
-      photo: null,
       purpose: "",
       otherPurpose: "",
       visitPersonOrDepartment: "",
@@ -56,178 +70,235 @@ const VisitorForm = ({ addVisitor, hospitalId, loading }) => {
       governmentId: "",
       idLast4Digits: "",
       checked: false,
+      // photo: null,
     });
   };
 
+  const isFormComplete = () =>
+    formState.name &&
+    formState.contact &&
+    formState.purpose &&
+    (formState.purpose !== "Other" || formState.otherPurpose) &&
+    formState.visitPersonOrDepartment &&
+    formState.expectedDuration &&
+    formState.governmentId &&
+    formState.idLast4Digits &&
+    formState.checked &&
+    formState.photo; // Ensure photo is also included
+
   return (
-    <div className="visitor-form-container">
-      <form className="visitor-form" onSubmit={handleSubmit}>
-        <h2>Hospital Visitor Registration</h2>
+    <Box sx={{ p: 4, maxWidth: 500, margin: "auto" }}>
+      <form onSubmit={handleSubmit}>
+        <Typography variant="h5" sx={{ mb: 2, textAlign: "center" }}>
+          Hospital Visitor Registration
+        </Typography>
 
-        <div className="form-group">
-          <label htmlFor="name">Full Name:</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formState.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        {/* Form Fields */}
+        <TextField
+          label="Full Name"
+          name="name"
+          value={formState.name}
+          onChange={handleChange}
+          fullWidth
+          required
+          sx={{ mb: 2 }}
+        />
 
-        <div className="form-group">
-          <label htmlFor="contact">Contact Number:</label>
-          <input
-            type="text"
-            id="contact"
-            name="contact"
-            value={formState.contact}
-            onChange={handleChange}
-            pattern="^\d{10}$"
-            title="Contact number must be 10 digits."
-            required
-          />
-        </div>
+        <TextField
+          label="Contact Number"
+          name="contact"
+          value={formState.contact}
+          onChange={handleChange}
+          fullWidth
+          required
+          sx={{ mb: 2 }}
+          inputProps={{
+            pattern: "^[0-9]{10}$",
+            title: "Contact number must be 10 digits.",
+          }}
+        />
 
-        <div className="form-group">
-          <label htmlFor="email">Email Address (Optional):</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formState.email}
-            onChange={handleChange}
-          />
-        </div>
+        <TextField
+          label="Email Address"
+          name="email"
+          value={formState.email}
+          onChange={handleChange}
+          fullWidth
+          required
+          sx={{ mb: 2 }}
+        />
 
-        <div className="form-group">
-          <label htmlFor="photo">Upload Photo (Optional):</label>
-          <input
-            type="file"
-            id="photo"
-            name="photo"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="purpose">Purpose of Visit:</label>
-          <select
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <InputLabel id="purpose-label">Purpose of Visit</InputLabel>
+          <Select
+            labelId="purpose-label"
             id="purpose"
             name="purpose"
             value={formState.purpose}
             onChange={handleChange}
+            label="Purpose of Visit"
             required
           >
-            <option value="">-- Select Purpose --</option>
-            <option value="Meeting a Patient">Meeting a Patient</option>
-            <option value="Vendor/Delivery">Vendor/Delivery</option>
-            <option value="Maintenance/Repairs">Maintenance/Repairs</option>
-            <option value="Official Meeting with Staff">
+            <MenuItem value="">-- Select Purpose --</MenuItem>
+            <MenuItem value="Meeting a Patient">Meeting a Patient</MenuItem>
+            <MenuItem value="Vendor/Delivery">Vendor/Delivery</MenuItem>
+            <MenuItem value="Maintenance/Repairs">Maintenance/Repairs</MenuItem>
+            <MenuItem value="Official Meeting with Staff">
               Official Meeting with Staff
-            </option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
+            </MenuItem>
+            <MenuItem value="Other">Other</MenuItem>
+          </Select>
+        </FormControl>
 
         {formState.purpose === "Other" && (
-          <div className="form-group">
-            <label htmlFor="otherPurpose">Please Specify:</label>
-            <input
-              type="text"
-              id="otherPurpose"
-              name="otherPurpose"
-              value={formState.otherPurpose}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <TextField
+            label="Please Specify"
+            name="otherPurpose"
+            value={formState.otherPurpose}
+            onChange={handleChange}
+            fullWidth
+            required
+            sx={{ mb: 2 }}
+          />
         )}
 
-        <div className="form-group">
-          <label htmlFor="visitPersonOrDepartment">
-            Person/Department to Visit:
-          </label>
-          <input
-            type="text"
-            id="visitPersonOrDepartment"
-            name="visitPersonOrDepartment"
-            value={formState.visitPersonOrDepartment}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <TextField
+          label="Person/Department to Visit"
+          name="visitPersonOrDepartment"
+          value={formState.visitPersonOrDepartment}
+          onChange={handleChange}
+          fullWidth
+          required
+          sx={{ mb: 2 }}
+        />
 
-        <div className="form-group">
-          <label htmlFor="expectedDuration">Expected Duration:</label>
-          <select
-            id="expectedDuration"
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <InputLabel id="expected-duration">Expected Duration</InputLabel>
+          <Select
+            labelId="expected-duration"
+            label="Expected Duration"
+            id="duration"
             name="expectedDuration"
             value={formState.expectedDuration}
             onChange={handleChange}
             required
           >
-            <option value="">-- Select Duration --</option>
-            <option value="Less than 30 minutes">Less than 30 minutes</option>
-            <option value="30 minutes to 1 hour">30 minutes to 1 hour</option>
-            <option value="1-2 hours">1-2 hours</option>
-            <option value="More than 2 hours">More than 2 hours</option>
-          </select>
-        </div>
+            <MenuItem value="">-- Select Duration --</MenuItem>
+            <MenuItem value="Less than 30 minutes">
+              Less than 30 minutes
+            </MenuItem>
+            <MenuItem value="30 minutes to 1 hour">
+              30 minutes to 1 hour
+            </MenuItem>
+            <MenuItem value="1-2 hours">1-2 hours</MenuItem>
+            <MenuItem value="More than 2 hours">More than 2 hours</MenuItem>
+          </Select>
+        </FormControl>
 
-        <div className="form-group">
-          <label htmlFor="governmentId">Government ID:</label>
-          <select
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <InputLabel label="governmentId">Government ID</InputLabel>
+          <Select
+            labelId="governmentId"
+            label="Government ID"
             id="governmentId"
             name="governmentId"
             value={formState.governmentId}
             onChange={handleChange}
             required
           >
-            <option value="">-- Select ID --</option>
-            <option value="Aadhar Card">Aadhar Card</option>
-            <option value="PAN Card">PAN Card</option>
-            <option value="Driving License">Driving License</option>
-            <option value="Passport">Passport</option>
-            <option value="Voter ID">Voter ID</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
+            <MenuItem value="">-- Select ID --</MenuItem>
+            <MenuItem value="Aadhar Card">Aadhar Card</MenuItem>
+            <MenuItem value="PAN Card">PAN Card</MenuItem>
+            <MenuItem value="Driving License">Driving License</MenuItem>
+            <MenuItem value="Passport">Passport</MenuItem>
+            <MenuItem value="Voter ID">Voter ID</MenuItem>
+            <MenuItem value="Other">Other</MenuItem>
+          </Select>
+        </FormControl>
 
-        <div className="form-group">
-          <label htmlFor="idLast4Digits">Last 4 Digits of ID:</label>
+        <TextField
+          label="Last 4 Digits of ID"
+          name="idLast4Digits"
+          value={formState.idLast4Digits}
+          onChange={handleChange}
+          fullWidth
+          required
+          inputProps={{
+            pattern: "^[0-9]{4}$",
+            title: "Must be exactly 4 digits.",
+          }}
+          sx={{ mb: 2 }}
+        />
+
+        {/* Photo Upload Section */}
+        {/* <Box sx={{ mb: 2 }}>
+          <Typography variant="body1">Upload Your Photo</Typography>
           <input
-            type="text"
-            id="idLast4Digits"
-            name="idLast4Digits"
-            value={formState.idLast4Digits}
-            onChange={handleChange}
-            pattern="^\d{4}$"
-            title="Must be exactly 4 digits."
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
             required
+            style={{ marginTop: "10px" }}
           />
-        </div>
+          {formState.photo && (
+            <Box sx={{ mt: 2, textAlign: "center" }}>
+              <img
+                src={formState.photo}
+                alt="Visitor Photo"
+                style={{ maxWidth: "100%", maxHeight: "200px" }}
+              />
+            </Box>
+          )}
+        </Box> */}
 
-        <div className="form-group">
-          <label>
-            <input
-              type="checkbox"
-              id="checked"
+        <FormControlLabel
+          control={
+            <Checkbox
               name="checked"
+              checked={formState.checked}
               onChange={handleChange}
               required
             />
-            I agree to follow hospital rules and provide accurate information.
-          </label>
-        </div>
+          }
+          label="I agree to follow hospital rules and provide accurate information."
+          sx={{ mb: 2 }}
+        />
 
-        <button type="submit" disabled={loading}>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          disabled={!isFormComplete() || loading}
+        >
           {loading ? "Loading..." : "Submit"}
-        </button>
+        </Button>
       </form>
-    </div>
+
+      <Modal open={isModalOpen} onClose={() => setModalOpen(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "white",
+            borderRadius: 2,
+            p: 4,
+            boxShadow: 24,
+            textAlign: "center",
+          }}
+        >
+          <CheckCircleOutlineIcon
+            sx={{ fontSize: 80, color: "green", mb: 2 }}
+          />
+          <Typography variant="h6" sx={{ mb: 1 }}>
+            Your form is submitted successfully!
+          </Typography>
+          <Typography variant="body1">Just wait for approval.</Typography>
+        </Box>
+      </Modal>
+    </Box>
   );
 };
 

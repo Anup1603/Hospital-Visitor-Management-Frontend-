@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "../src/axiosInstance";
 import VisitorForm from "./components/VisitorForm";
+import { Box, CircularProgress, Typography } from "@mui/material";
 
 function App() {
   const { hospitalId } = useParams();
@@ -69,10 +70,27 @@ function App() {
   };
 
   return (
-    <div>
-      <h1>Hospital Name : {hospitalData.hospitalName}</h1>
+    <Box sx={{ textAlign: "center", p: 4 }}>
+      <Typography
+        variant="h4"
+        sx={{ mb: 4, fontWeight: "bold", fontSize: "30px" }}
+      >
+        <p style={{ fontWeight: "normal" }}>Welcome to </p>
+        {hospitalData.hospitalName}{" "}
+      </Typography>
+
+      {/* Loading or Visitor Form */}
       {loading ? (
-        <p>Loading...</p>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "50vh",
+          }}
+        >
+          <CircularProgress />
+        </Box>
       ) : (
         <VisitorForm
           formData={formData}
@@ -80,7 +98,7 @@ function App() {
           hospitalId={hospitalId}
         />
       )}
-    </div>
+    </Box>
   );
 }
 
