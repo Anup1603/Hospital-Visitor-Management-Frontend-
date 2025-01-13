@@ -109,7 +109,8 @@ const VisitorForm = ({ addVisitor, hospitalId, loading }) => {
       governmentId: "",
       idLast4Digits: "",
       checked: false,
-      photo: null,
+      photo:
+        "https://img.freepik.com/free-psd/contact-icon-illustration-isolated_23-2151903337.jpg",
     });
   };
 
