@@ -26,7 +26,8 @@ const VisitorForm = ({ addVisitor, hospitalId, loading }) => {
     governmentId: "",
     idLast4Digits: "",
     checked: false,
-    // photo: null,
+    photo:
+      "https://img.freepik.com/free-psd/contact-icon-illustration-isolated_23-2151903337.jpg",
   });
 
   const [isModalOpen, setModalOpen] = useState(false);
@@ -39,12 +40,50 @@ const VisitorForm = ({ addVisitor, hospitalId, loading }) => {
     });
   };
 
-  // const handlePhotoChange = (e) => {
-  //   const file = e.target.files[0];
-  //   if (file) {
-  //     setFormState({ ...formState, photo: URL.createObjectURL(file) });
-  //   }
-  // };
+  const handlePhotoChange = async (e) => {
+    const pic = e.target.files[0];
+
+    if (!pic) {
+      console.warn("No file selected.");
+      return;
+    }
+
+    if (pic.type !== "image/jpeg" && pic.type !== "image/png") {
+      console.error(
+        "Unsupported file type. Please select a JPEG or PNG image."
+      );
+      return;
+    }
+
+    try {
+      const data = new FormData();
+      data.append("file", pic);
+      data.append("upload_preset", "anup_hvm");
+      data.append("cloud_name", "anupshaw");
+
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/anupshaw/image/upload",
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+
+      if (!res.ok) {
+        console.error("Image upload failed. Please try again.");
+        return;
+      }
+
+      const uploadPic = await res.json();
+
+      setFormState((prevState) => ({
+        ...prevState,
+        photo: uploadPic.url.toString(),
+      }));
+    } catch (error) {
+      console.error("An error occurred while uploading the image:", error);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -70,7 +109,7 @@ const VisitorForm = ({ addVisitor, hospitalId, loading }) => {
       governmentId: "",
       idLast4Digits: "",
       checked: false,
-      // photo: null,
+      photo: null,
     });
   };
 
@@ -83,8 +122,8 @@ const VisitorForm = ({ addVisitor, hospitalId, loading }) => {
     formState.expectedDuration &&
     formState.governmentId &&
     formState.idLast4Digits &&
-    formState.checked;
-  // formState.photo;
+    formState.checked &&
+    formState.photo;
 
   return (
     <Box
@@ -241,7 +280,7 @@ const VisitorForm = ({ addVisitor, hospitalId, loading }) => {
         />
 
         {/* Photo Upload Section */}
-        {/* <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 2 }}>
           <Typography variant="body1">Upload Your Photo</Typography>
           <input
             type="file"
@@ -259,7 +298,7 @@ const VisitorForm = ({ addVisitor, hospitalId, loading }) => {
               />
             </Box>
           )}
-        </Box> */}
+        </Box>
 
         <FormControlLabel
           control={
